@@ -88,7 +88,7 @@ class Beacon(Model):
                                       shape=(self.rnn_units, self.nb_items), name="W_H")
 
                 next_item_probs = tf.nn.sigmoid(tf.matmul(h_T, W_H))
-                next_item_item_bias = self.encode_basket_intent(next_item_probs,tf.constant(0.0))
+                next_item_bias = self.encode_basket_intent(next_item_probs,tf.constant(0.0))
 
                 W_N = tf.get_variable(dtype=tf.float32, initializer=tf.initializers.glorot_uniform(),
                                       shape=(batch_size, self.nb_items), name="W_N")
@@ -98,10 +98,10 @@ class Beacon(Model):
                                       shape=(batch_size, 1), name="alpha_bias")
 
                 alpha = tf.nn.sigmoid(tf.reduce_sum(tf.multiply(W_N,next_item_probs), 1, keep_dims=True)
-                                      + tf.reduce_sum(tf.multiply(W_IB,next_item_item_bias), 1, keep_dims=True)
+                                      + tf.reduce_sum(tf.multiply(W_IB,next_item_bias), 1, keep_dims=True)
                                       + alpha_bias)
 
-                logits = tf.multiply((1.0 - alpha),next_item_probs) + tf.multiply(alpha * next_item_item_bias)
+                logits = tf.multiply((1.0 - alpha),next_item_probs) + tf.multiply(alpha * next_item_bias)
 
             with tf.name_scope("Loss"):
                 self.loss = self.compute_loss(logits, self.y)
