@@ -101,7 +101,7 @@ class Beacon(Model):
                                       + tf.reduce_sum(tf.multiply(W_IB,next_item_bias), 1, keep_dims=True)
                                       + alpha_bias)
 
-                logits = tf.multiply((1.0 - alpha),next_item_probs) + tf.multiply(alpha * next_item_bias)
+                logits = tf.multiply((1.0 - alpha),next_item_probs) + tf.multiply(alpha, next_item_bias)
 
             with tf.name_scope("Loss"):
                 self.loss = self.compute_loss(logits, self.y)
