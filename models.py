@@ -97,11 +97,11 @@ class Beacon(Model):
                 alpha_bias = tf.get_variable(dtype=tf.float32, initializer=tf.zeros_initializer(),
                                       shape=(batch_size, 1), name="alpha_bias")
 
-                alpha = tf.nn.sigmoid(tf.reduce_sum(tf.multiply(W_N,next_item_probs), 1, keep_dims=True)
+                dynamic_alpha = tf.nn.sigmoid(tf.reduce_sum(tf.multiply(W_N,next_item_probs), 1, keep_dims=True)
                                       + tf.reduce_sum(tf.multiply(W_IB,next_item_bias), 1, keep_dims=True)
                                       + alpha_bias)
 
-                logits = tf.multiply((1.0 - alpha),next_item_probs) + tf.multiply(alpha, next_item_bias)
+                logits = tf.multiply((1.0 - dynamic_alpha),next_item_probs) + tf.multiply(dynamic_alpha, next_item_bias)
 
             with tf.name_scope("Loss"):
                 self.loss = self.compute_loss(logits, self.y)
