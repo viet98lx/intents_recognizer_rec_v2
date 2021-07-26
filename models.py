@@ -91,15 +91,15 @@ class Beacon(Model):
                 next_item_bias = self.encode_basket_intent(next_item_probs,tf.constant(0.0))
 
                 W_N = tf.get_variable(dtype=tf.float32, initializer=tf.initializers.glorot_uniform(),
-                                      shape=(self.nb_items, self.nb_items), name="W_N")
+                                      shape=(1, self.nb_items), name="W_N")
                 W_IB = tf.get_variable(dtype=tf.float32, initializer=tf.initializers.glorot_uniform(),
-                                      shape=(self.nb_items, self.nb_items), name="W_IB")
+                                      shape=(1, self.nb_items), name="W_IB")
                 alpha_bias = tf.get_variable(dtype=tf.float32, initializer=tf.zeros_initializer(),
                                       shape=(1), name="alpha_bias")
 
-                dynamic_alpha = tf.nn.sigmoid(tf.reduce_sum(tf.matmul(next_item_probs,W_N), 1, keep_dims=True)
-                                              + tf.reduce_sum(tf.matmul(next_item_bias,W_IB), 1, keep_dims=True)
-                                              + alpha_bias)
+                dynamic_alpha = tf.nn.sigmoid(tf.reduce_sum(tf.matmul(next_item_probs,tf.transpose(W_N)), 1, keep_dims=True)
+                      + tf.reduce_sum(tf.matmul(next_item_bias,tf.transpose(W_IB)), 1, keep_dims=True)
+                      + alpha_bias)
 
                 logits = tf.multiply((1.0 - dynamic_alpha),next_item_probs) + tf.multiply(dynamic_alpha, next_item_bias)
 
